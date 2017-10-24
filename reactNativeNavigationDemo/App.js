@@ -1,57 +1,46 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
+import React from 'react';
+import { Navigation } from 'react-native-navigation';
+import { Screen1, Screen2, Screen3, Screen4 } from './screens';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-export default class App extends Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
-  }
+const prepareIcons = async () => {
+  const icons = await Promise.all([
+    Icon.getImageSource('ios-home', 26),
+    Icon.getImageSource('ios-home-outline', 26),
+    Icon.getImageSource('ios-person', 26),
+    Icon.getImageSource('ios-person-outline', 26),
+  ]);
+  const [home, homeOutline, person, personOutline] = icons;
+  return { home, homeOutline, person, personOutline };
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+const registerScreens = () => {
+  Navigation.registerComponent('example.List', () => Screen1);
+  Navigation.registerComponent('example.Details', () => Screen2);
+  Navigation.registerComponent('example.Profile', () => Screen3);
+  Navigation.registerComponent('example.Friends', () => Screen4);
+};
+
+export default startApp = async () => {
+  const icons = await prepareIcons();
+  registerScreens();
+
+  Navigation.startTabBasedApp({
+    tabs: [
+      {
+        label: 'Home',
+        screen: 'example.List',
+        icon: icons.homeOutline,
+        selectedIcon: icons.home,
+        title: 'List'
+      },
+      {
+        label: 'Profile',
+        screen: 'example.Profile',
+        icon: icons.personOutline,
+        selectedIcon: icons.person,
+        title: 'Profile'
+      }
+    ]
+  });
+};
