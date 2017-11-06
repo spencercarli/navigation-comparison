@@ -61,6 +61,8 @@ const Tabs = TabNavigator({
       ),
     }
   },
+}, {
+  tabBarPosition: 'bottom',
 });
 
 export default class App extends React.Component {
